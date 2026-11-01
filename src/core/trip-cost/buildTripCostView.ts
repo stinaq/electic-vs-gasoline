@@ -33,6 +33,8 @@ export type SliderView = {
 
 export type CarView = {
   name: string;
+  /** Extra info under the name (engine), when the config has it. */
+  detail: string | null;
   /** Read-only consumption text, set when the car's consumption is not editable. */
   consumptionText: string | null;
   /** Consumption slider, set when the car's consumption is editable. */
@@ -51,10 +53,8 @@ export type ResultsView = {
   summary: string;
 };
 
-export type BreakEvenView = {
-  electricity: string | null;
-  gasoline: string | null;
-};
+/** Break-even notes, or null when there are none (nothing to show). */
+export type BreakEvenView = string[] | null;
 
 export type TripCostView = {
   distanceError: string | null;
@@ -96,12 +96,14 @@ export const buildCarView = (vehicle: Vehicle, consumption: number): CarView => 
   if (range === undefined) {
     return {
       name: vehicle.name,
+      detail: vehicle.engine ?? null,
       consumptionText: formatWithUnit(consumption, DEFAULT_CONSUMPTION_DECIMALS, unit),
       consumptionSlider: null,
     };
   }
   return {
     name: vehicle.name,
+    detail: vehicle.engine ?? null,
     consumptionText: null,
     consumptionSlider: {
       value: consumption,
@@ -138,14 +140,13 @@ export const buildBreakEven = (input: TripCostInput, cars: CarPair): BreakEvenVi
   const litersPer100Km = cars.gasoline.consumptionPer100Km;
   const electricity = calculateElectricityBreakEven(input.gasolinePrice, litersPer100Km, input.kWhPer100Km);
   const gasoline = calculateGasolineBreakEven(input.electricityPrice, input.kWhPer100Km, litersPer100Km);
-  return {
-    electricity:
-      electricity === null
-        ? null
-        : TEXT.electricityBreakEven(formatWithUnit(electricity, MONEY_DECIMALS, ELECTRICITY_PRICE_UNIT)),
-    gasoline:
-      gasoline === null ? null : TEXT.gasolineBreakEven(formatWithUnit(gasoline, MONEY_DECIMALS, GASOLINE_PRICE_UNIT)),
-  };
+  const notes = [
+    electricity === null
+      ? null
+      : TEXT.electricityBreakEven(formatWithUnit(electricity, MONEY_DECIMALS, ELECTRICITY_PRICE_UNIT)),
+    gasoline === null ? null : TEXT.gasolineBreakEven(formatWithUnit(gasoline, MONEY_DECIMALS, GASOLINE_PRICE_UNIT)),
+  ].filter((note): note is string => note !== null);
+  return notes.length > 0 ? notes : null;
 };
 
 export const calculateComparison = (distance: number, input: TripCostInput, cars: CarPair): CostComparison => {

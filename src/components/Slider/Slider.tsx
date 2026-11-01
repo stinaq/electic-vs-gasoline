@@ -3,6 +3,7 @@ import styles from './Slider.module.scss';
 export type SliderProps = {
   id: string;
   label: string;
+  hint?: string | null;
   value: number;
   min: number;
   max: number;
@@ -11,12 +12,15 @@ export type SliderProps = {
   onChange: (value: number) => void;
 };
 
-export const Slider = ({ id, label, value, min, max, step, displayValue, onChange }: SliderProps) => (
+export const Slider = ({ id, label, hint, value, min, max, step, displayValue, onChange }: SliderProps) => (
   <div className={styles.slider}>
     <div className={styles.header}>
-      <label className={styles.label} htmlFor={id}>
-        {label}
-      </label>
+      <div className={styles.labelGroup}>
+        <label className={styles.label} htmlFor={id}>
+          {label}
+        </label>
+        {hint && <p className={styles.hint}>{hint}</p>}
+      </div>
       <output className={styles.value} htmlFor={id}>
         {displayValue}
       </output>

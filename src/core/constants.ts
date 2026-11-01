@@ -43,6 +43,7 @@ export const TEXT = {
   carsHeading: 'The cars',
 
   resultsHeading: 'Cost for this trip',
+  breakEvenHeading: 'Break-even prices',
   errorDistanceRequired: 'Enter a distance',
   errorDistanceNotNumber: 'Enter a number, e.g. 12,5',
   errorDistanceNotPositive: 'The distance must be more than 0',

@@ -20,10 +20,10 @@ All logic lives in `core/trip-cost/`, with shared formatting in `core/format/`.
 
 ## Cars (v1)
 
-| Car | Short name | Type | Consumption | Editable |
-|---|---|---|---|---|
-| Volvo V70 (2009) | Volvo V70 | gasoline | 8,0 l/100 km | No. Shown as read-only text |
-| Nissan Leaf (2022, 40 kWh) | Nissan Leaf | electric | 13,0 kWh/100 km (default) | Yes. Slider 12–30 kWh/100 km, step 0,1 |
+| Car | Short name | Engine | Type | Consumption | Editable |
+|---|---|---|---|---|---|
+| Volvo V70 (2009) | Volvo V70 | 2.0 F B4204S4 (107 kW) | gasoline | 8,0 l/100 km | No. Shown as read-only text |
+| Nissan Leaf (2022, 40 kWh) | Nissan Leaf | – | electric | 13,0 kWh/100 km (default) | Yes. Slider 12–30 kWh/100 km, step 0,1 |
 
 The full name is used on labels and result cards. The short name is used in running text
 (the summary line).
@@ -60,8 +60,10 @@ and `"-3"` give an error and no result.
 
 ## F3 — Car consumption
 
-- Gasoline car: name and consumption shown as read-only text (e.g. `Volvo V70 (2009) · 8,0 l/100 km`).
+- Gasoline car: name and consumption shown as read-only text (e.g. `Volvo V70 (2009)` and `8,0 l/100 km`).
 - Electric car: name, plus a consumption slider prefilled with the config default.
+- If a car has an engine designation in the config, it is shown as a detail under the name
+  (e.g. `2.0 F B4204S4 (107 kW)`).
   Range and step come from the car's config entry.
 
 **Done when:** moving the Leaf slider changes the electric cost live, and the Volvo value

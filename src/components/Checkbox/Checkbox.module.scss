@@ -18,14 +18,16 @@
   border-radius: 4px 7px 3px 6px / 6px 3px 7px 4px;
   cursor: pointer;
 
+  // Hand-drawn check that overshoots the box a little.
   &:checked::after {
-    content: '✓';
+    content: '';
     position: absolute;
-    left: 2px;
-    top: -14px;
-    font-family: var(--font-heading);
-    font-size: 2rem;
-    line-height: 1;
+    left: -1px;
+    top: -9px;
+    width: 26px;
+    height: 26px;
+    background-color: var(--color-ink);
+    mask: var(--mark-check) no-repeat center / contain;
   }
 
   &:focus-visible {
@@ -35,5 +37,5 @@
 }
 
 .label {
-  font-size: 1.1rem;
+  font-size: 1rem;
 }

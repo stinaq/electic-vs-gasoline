@@ -1,7 +1,6 @@
 import { CardRow } from './components/CardRow/CardRow';
 import { Checkbox } from './components/Checkbox/Checkbox';
 import { MarginNote } from './components/MarginNote/MarginNote';
-import { NoteGroup } from './components/NoteGroup/NoteGroup';
 import { NumberField } from './components/NumberField/NumberField';
 import { Page } from './components/Page/Page';
 import { ReadOnlyValue } from './components/ReadOnlyValue/ReadOnlyValue';
@@ -59,12 +58,17 @@ export const App = () => {
       </Section>
 
       <Section heading={text.carsHeading}>
-        {gasolineCar.consumptionText && <ReadOnlyValue label={gasolineCar.name} value={gasolineCar.consumptionText} />}
-        {electricCar.consumptionText && <ReadOnlyValue label={electricCar.name} value={electricCar.consumptionText} />}
+        {gasolineCar.consumptionText && (
+          <ReadOnlyValue label={gasolineCar.name} detail={gasolineCar.detail} value={gasolineCar.consumptionText} />
+        )}
+        {electricCar.consumptionText && (
+          <ReadOnlyValue label={electricCar.name} detail={electricCar.detail} value={electricCar.consumptionText} />
+        )}
         {electricCar.consumptionSlider && (
           <Slider
             id="electric-consumption"
             label={electricCar.name}
+            hint={electricCar.detail}
             value={electricCar.consumptionSlider.value}
             min={electricCar.consumptionSlider.min}
             max={electricCar.consumptionSlider.max}
@@ -85,10 +89,13 @@ export const App = () => {
         </Section>
       )}
 
-      <NoteGroup>
-        {breakEven.electricity && <MarginNote text={breakEven.electricity} />}
-        {breakEven.gasoline && <MarginNote text={breakEven.gasoline} />}
-      </NoteGroup>
+      {breakEven && (
+        <Section heading={text.breakEvenHeading}>
+          {breakEven.map((note) => (
+            <MarginNote key={note} text={note} />
+          ))}
+        </Section>
+      )}
     </Page>
   );
 };

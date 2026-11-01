@@ -31,14 +31,20 @@ $track-height: 7px;
 }
 
 .label {
-  font-size: 1.1rem;
+  font-size: 1rem;
+}
+
+.hint {
+  color: var(--color-pencil);
+  font-size: 0.9rem;
 }
 
 .value {
   min-width: 13ch;
   text-align: right;
   white-space: nowrap;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 

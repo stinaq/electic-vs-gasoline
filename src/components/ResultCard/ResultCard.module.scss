@@ -28,13 +28,16 @@
 
 .title {
   font-family: var(--font-heading);
-  font-size: 1.6rem;
-  line-height: 1.1;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .cost {
-  font-size: 2.2rem;
+  font-size: 2rem;
+  font-weight: 700;
   line-height: 1.2;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
@@ -66,13 +69,14 @@
 
   // Hand-drawn check mark next to the winner.
   &::after {
-    content: '✓';
+    content: '';
     position: absolute;
-    top: -30px;
-    right: -14px;
-    font-family: var(--font-heading);
-    font-size: 3.2rem;
-    line-height: 1;
-    transform: rotate(8deg);
+    top: -22px;
+    right: -12px;
+    width: 48px;
+    height: 48px;
+    background-color: var(--color-ink);
+    mask: var(--mark-check) no-repeat center / contain;
+    transform: rotate(6deg);
   }
 }

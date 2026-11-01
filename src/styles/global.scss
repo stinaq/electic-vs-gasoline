@@ -1,15 +1,15 @@
 :root {
   // Colors
-  --color-paper: #f5ecd2;
-  --color-paper-shade: #ebdfbd;
-  --color-ink: #1c1a17;
-  --color-pencil: #6e675a;
-  --color-highlighter: #ffe14d;
-  --color-red-pen: #c8372d;
+  --color-paper: #f5e9e7;
+  --color-paper-shade: #cccdc7;
+  --color-ink: #5a322a;
+  --color-pencil: #6e6957;
+  --color-highlighter: #e4a499;
+  --color-red-pen: #a93a2e;
 
   // Typography
-  --font-heading: 'Caveat', cursive;
-  --font-body: 'Patrick Hand', sans-serif;
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 
   // Lines
   --line-bold: 3px;
@@ -24,6 +24,9 @@
   --space-5: 24px;
   --space-6: 40px;
 
+  // Marks: hand-drawn shapes used as masks, so they take any color via background-color.
+  --mark-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 17c3 2 6 6 8 10 4-9 9-17 17-23' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
   // Motion
   --duration-draw: 200ms;
 }
@@ -35,7 +38,7 @@
 }
 
 html {
-  font-size: 19px;
+  font-size: 17px;
 }
 
 body {
@@ -43,7 +46,8 @@ body {
   min-height: 100vh;
   color: var(--color-ink);
   font-family: var(--font-body);
-  line-height: 1.4;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
   background-color: var(--color-paper);
   // Barely visible paper grain.
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");

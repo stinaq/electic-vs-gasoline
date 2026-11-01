@@ -129,7 +129,7 @@ export const ResultCard = ({ title, cost, highlighted }: ResultCardProps) => (
 ### Vehicle config (`core/vehicles.ts`)
 
 - Data only. A typed list of cars: `id`, `name`, an optional `shortName` for running text
-  (falls back to `name`), `type` (`'gasoline' | 'electric'`), default consumption per 100 km, and an optional editable range (`min`, `max`, `step`) for
+  (falls back to `name`), an optional `engine` designation, `type` (`'gasoline' | 'electric'`), default consumption per 100 km, and an optional editable range (`min`, `max`, `step`) for
   cars whose consumption the user may adjust.
 - Adding a car means adding an entry here. No other code should need to change for the data itself.
 - Real-world figures come from the project owner. **Agents must not invent them.**

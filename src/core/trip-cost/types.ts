@@ -18,6 +18,8 @@ export type Vehicle = {
   name: string;
   /** Shorter name for running text such as the summary line. Falls back to `name`. */
   shortName?: string;
+  /** Engine designation, shown as a detail under the name, e.g. `2.0 F B4204S4 (107 kW)`. */
+  engine?: string;
   type: VehicleType;
   /** Liters per 100 km for gasoline cars, kWh per 100 km for electric cars. */
   consumptionPer100Km: number;

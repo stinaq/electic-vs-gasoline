@@ -1,27 +1,38 @@
+// Each section is a hand-drawn frame. The heading sits on the top line and breaks it,
+// like a label on a form, so it stands out without an underline.
 .section {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  padding: var(--space-6) var(--space-5) var(--space-5);
+
+  // Frame on a pseudo-element so the rough-ink filter never touches the content.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: var(--line-bold) solid var(--color-ink);
+    border-radius: 18px 225px 12px 255px / 255px 14px 225px 18px;
+    filter: url(#ink);
+    pointer-events: none;
+  }
+
+  &:nth-of-type(even)::before {
+    border-radius: 225px 16px 255px 12px / 14px 255px 18px 225px;
+  }
 }
 
 .heading {
-  position: relative;
-  align-self: flex-start;
+  position: absolute;
+  top: 0;
+  left: var(--space-4);
+  transform: translateY(-55%);
+  padding: 0 var(--space-3);
+  background: var(--color-paper);
   font-family: var(--font-heading);
-  font-size: 2rem;
-  line-height: 1.1;
-  transform: rotate(-0.6deg);
-
-  // Hand-drawn underline (decorative line, so the ink filter is allowed here).
-  &::after {
-    content: '';
-    position: absolute;
-    left: -4px;
-    right: -10px;
-    bottom: -2px;
-    height: var(--line-bold);
-    background: var(--color-ink);
-    border-radius: 40% 60% 30% 70% / 50% 40% 60% 50%;
-    filter: url(#ink);
-  }
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }

@@ -61,14 +61,23 @@ describe('buildCarView', () => {
   it('shows read-only text for a car without an editable range', () => {
     expect(buildCarView(cars.gasoline, 8)).toEqual({
       name: 'Gas Car',
+      detail: null,
       consumptionText: `8,0${nbsp}l/100 km`,
       consumptionSlider: null,
     });
   });
 
+  it('shows the engine as a detail when configured', () => {
+    expect(buildCarView({ ...cars.gasoline, engine: '2.0 F B4204S4 (107 kW)' }, 8).detail).toBe(
+      '2.0 F B4204S4 (107 kW)',
+    );
+    expect(buildCarView({ ...cars.electric, engine: 'EM57 (110 kW)' }, 13).detail).toBe('EM57 (110 kW)');
+  });
+
   it('shows a slider with step precision for an editable car', () => {
     expect(buildCarView(cars.electric, 14.3)).toEqual({
       name: 'EV (2022, 40 kWh)',
+      detail: null,
       consumptionText: null,
       consumptionSlider: { value: 14.3, min: 12, max: 30, step: 0.1, display: `14,3${nbsp}kWh/100 km` },
     });
@@ -132,14 +141,14 @@ describe('buildResults', () => {
 
 describe('buildBreakEven', () => {
   it('formats both break-even prices', () => {
-    expect(buildBreakEven(input(), cars)).toEqual({
-      electricity: `Electric is cheaper while electricity is below 10,77${nbsp}kr/kWh`,
-      gasoline: `Gasoline is cheaper while gasoline is below 3,25${nbsp}kr/l`,
-    });
+    expect(buildBreakEven(input(), cars)).toEqual([
+      `Electric is cheaper while electricity is below 10,77${nbsp}kr/kWh`,
+      `Gasoline is cheaper while gasoline is below 3,25${nbsp}kr/l`,
+    ]);
   });
 
   it('shows nothing when a consumption is 0', () => {
-    expect(buildBreakEven(input({ kWhPer100Km: 0 }), cars)).toEqual({ electricity: null, gasoline: null });
+    expect(buildBreakEven(input({ kWhPer100Km: 0 }), cars)).toBeNull();
   });
 });
 
@@ -152,8 +161,7 @@ describe('buildTripCostView', () => {
 
   it('shows break-even even without a valid distance', () => {
     const view = buildTripCostView(input({ distance: 'abc', distanceTouched: true }), cars);
-    expect(view.breakEven.electricity).not.toBeNull();
-    expect(view.breakEven.gasoline).not.toBeNull();
+    expect(view.breakEven).toHaveLength(2);
   });
 
   it.each(['', 'abc', '0', '-3'])('shows an error and no results for %j once touched', (distance) => {

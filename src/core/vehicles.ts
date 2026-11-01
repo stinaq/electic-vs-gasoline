@@ -6,6 +6,7 @@ export const VEHICLES: readonly Vehicle[] = [
     id: 'volvo-v70-2009',
     name: 'Volvo V70 (2009)',
     shortName: 'Volvo V70',
+    engine: '2.0 F B4204S4 (107 kW)',
     type: 'gasoline',
     consumptionPer100Km: 8.0,
   },
