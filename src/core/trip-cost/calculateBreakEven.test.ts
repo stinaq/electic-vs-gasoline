@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateElectricCost, calculateGasolineCost } from './calculateCosts';
+import { calculateChargedConsumption, calculateElectricCost, calculateGasolineCost } from './calculateCosts';
 import { calculateElectricityBreakEven, calculateGasolineBreakEven } from './calculateBreakEven';
 
 describe('calculateElectricityBreakEven', () => {
@@ -12,6 +12,14 @@ describe('calculateElectricityBreakEven', () => {
     expect(breakEven).not.toBeNull();
     if (breakEven === null) return;
     expect(calculateElectricCost(250, 13, breakEven)).toBeCloseTo(calculateGasolineCost(250, 8, 17.5));
+  });
+
+  it('is lower with charging losses, and both costs are still equal there', () => {
+    const kWhPer100Km = calculateChargedConsumption(13, true, 0.85);
+    const breakEven = calculateElectricityBreakEven(17.5, 8, kWhPer100Km);
+    expect(breakEven).toBeCloseTo(9.154, 3);
+    if (breakEven === null) return;
+    expect(calculateElectricCost(250, kWhPer100Km, breakEven)).toBeCloseTo(calculateGasolineCost(250, 8, 17.5));
   });
 
   it('can be outside the slider range', () => {

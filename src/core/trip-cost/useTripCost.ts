@@ -12,10 +12,12 @@ const CARS = selectCarPair(VEHICLES);
 export type UseTripCost = TripCostView & {
   distance: string;
   roundTrip: boolean;
+  includeChargingLosses: boolean;
   text: typeof TEXT;
   onDistanceChange: (value: string) => void;
   onDistanceBlur: () => void;
   onRoundTripChange: (checked: boolean) => void;
+  onChargingLossesChange: (checked: boolean) => void;
   onGasolinePriceChange: (value: number) => void;
   onElectricityPriceChange: (value: number) => void;
   onElectricConsumptionChange: (value: number) => void;
@@ -29,10 +31,12 @@ export const useTripCost = (): UseTripCost => {
     ...view,
     distance: input.distance,
     roundTrip: input.roundTrip,
+    includeChargingLosses: input.includeChargingLosses,
     text: TEXT,
     onDistanceChange: (distance) => setInput((prev) => ({ ...prev, distance, distanceTouched: true })),
     onDistanceBlur: () => setInput((prev) => ({ ...prev, distanceTouched: true })),
     onRoundTripChange: (roundTrip) => setInput((prev) => ({ ...prev, roundTrip })),
+    onChargingLossesChange: (includeChargingLosses) => setInput((prev) => ({ ...prev, includeChargingLosses })),
     onGasolinePriceChange: (value) =>
       setInput((prev) => ({
         ...prev,

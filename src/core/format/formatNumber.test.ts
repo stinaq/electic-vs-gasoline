@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decimalsForStep, formatMoney, formatNumber, formatWithUnit } from './formatNumber';
+import { decimalsForStep, formatMoney, formatNumber, formatPercent, formatWithUnit } from './formatNumber';
 
 // sv-SE uses a non-breaking space as thousands separator.
 const nbsp = ' ';
@@ -43,5 +43,20 @@ describe('decimalsForStep', () => {
     expect(decimalsForStep(0.1)).toBe(1);
     expect(decimalsForStep(1)).toBe(0);
     expect(decimalsForStep(10)).toBe(0);
+  });
+});
+
+describe('formatPercent', () => {
+  it('formats a share as a percentage in sv-SE', () => {
+    expect(formatPercent(0.15, 0)).toBe(`15${nbsp}%`);
+    expect(formatPercent(1 - 0.85, 0)).toBe(`15${nbsp}%`);
+  });
+
+  it('uses the given decimals with a decimal comma', () => {
+    expect(formatPercent(0.125, 1)).toBe(`12,5${nbsp}%`);
+  });
+
+  it('handles 0', () => {
+    expect(formatPercent(0, 0)).toBe(`0${nbsp}%`);
   });
 });

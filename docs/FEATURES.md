@@ -77,7 +77,8 @@ Formulas (pure, tested):
 
 - `tripDistance = distance × (roundTrip ? 2 : 1)`
 - `gasolineCost = tripDistance / 100 × litersPer100Km × gasolinePrice`
-- `electricCost = tripDistance / 100 × kWhPer100Km × electricityPrice`
+- `electricCost = tripDistance / 100 × chargedKWhPer100Km × electricityPrice`, where
+  `chargedKWhPer100Km` is the car's consumption, plus charging losses when included (see F6)
 - `cheaper = 'gasoline' | 'electric' | 'equal'`. It is `'equal'` when `|difference|` is below the
   tie threshold in `constants.ts` (default 0,01 kr).
 - `saving = |gasolineCost − electricCost|`
@@ -95,9 +96,10 @@ Display:
 Helps you see where one car overtakes the other while sliding.
 
 - Electricity break-even at the current gasoline price:
-  `gasolinePrice × litersPer100Km / kWhPer100Km` (kr/kWh)
+  `gasolinePrice × litersPer100Km / chargedKWhPer100Km` (kr/kWh)
 - Gasoline break-even at the current electricity price:
-  `electricityPrice × kWhPer100Km / litersPer100Km` (kr/l)
+  `electricityPrice × chargedKWhPer100Km / litersPer100Km` (kr/l)
+- `chargedKWhPer100Km` includes charging losses when they are switched on (see F6).
 - Shown as text, e.g. "Electric is cheaper while electricity is below 4,12 kr/kWh" and
   "Gasoline is cheaper while gasoline is below 8,40 kr/l".
 - Independent of distance, so it is shown even when the distance is empty or invalid.
@@ -106,6 +108,23 @@ Helps you see where one car overtakes the other while sliding.
   `null` and nothing is shown.
 
 **Done when:** tests verify that at the break-even price both costs are equal (`toBeCloseTo`).
+
+## F6 — Charging losses
+
+The car reports consumption out of the battery, but you pay for the electricity that comes out
+of the wall. Some of it is lost as heat while charging.
+
+- A checkbox "Include charging losses" in the cars section. **On by default.**
+- Charging efficiency: **85 %** (owner estimate for home AC charging), in `constants.ts`.
+- When on: `chargedKWhPer100Km = kWhPer100Km / chargingEfficiency`. When off, it equals `kWhPer100Km`.
+- Affects the electric cost (F4) and both break-even prices (F5). The Leaf slider still shows the
+  car's own consumption. The gasoline cost is unaffected.
+- A short hint under the checkbox explains it, with the loss as a percentage
+  (`1 − chargingEfficiency`, e.g. `15 %`).
+
+**Done when:** with losses on, 100 km at 13 kWh/100 km and 2,00 kr/kWh costs ≈ 30,59 kr
+(26,00 kr off), the electricity break-even at defaults is ≈ 9,15 kr/kWh (10,77 off), and tests
+verify the costs are still equal at the break-even price.
 
 ---
 
@@ -116,6 +135,6 @@ Keep the design open to these, but don't build them:
 - Choosing among multiple cars (config is already a list)
 - User-configurable units, currency or locale
 - CO2, range or charging-stop calculations
-- Home/public charging split, charging losses
+- Home/public charging split, or different losses per charging type
 - A visual break-even marker on the slider
 - Persistence (localStorage) or a backend

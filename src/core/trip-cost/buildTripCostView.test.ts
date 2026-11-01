@@ -3,6 +3,8 @@ import { ELECTRICITY_PRICE_RANGE, GASOLINE_PRICE_RANGE, TEXT } from '../constant
 import {
   buildBreakEven,
   buildCarView,
+  buildChargingLossesHint,
+  chargedConsumptionOf,
   buildPriceSlider,
   buildResults,
   buildSummary,
@@ -41,7 +43,24 @@ describe('createInitialInput', () => {
       gasolinePrice: GASOLINE_PRICE_RANGE.defaultValue,
       electricityPrice: ELECTRICITY_PRICE_RANGE.defaultValue,
       kWhPer100Km: 13,
+      includeChargingLosses: true,
     });
+  });
+});
+
+describe('chargedConsumptionOf', () => {
+  it('uses the car consumption when charging losses are off', () => {
+    expect(chargedConsumptionOf(input({ includeChargingLosses: false }))).toBe(13);
+  });
+
+  it('adds the configured charging losses when on', () => {
+    expect(chargedConsumptionOf(input({ includeChargingLosses: true }))).toBeCloseTo(13 / 0.85);
+  });
+});
+
+describe('buildChargingLossesHint', () => {
+  it('states the loss as a percentage', () => {
+    expect(buildChargingLossesHint(0.85)).toBe(TEXT.chargingLossesHint(`15${nbsp}%`));
   });
 });
 
@@ -87,14 +106,25 @@ describe('buildCarView', () => {
 describe('calculateComparison', () => {
   it('applies round trip and current prices', () => {
     // 25 km: gasoline 25/100 × 8 × 17,50 = 35 kr, electric 25/100 × 13 × 2 = 6,50 kr
-    const result = calculateComparison(12.5, input({ roundTrip: true }), cars);
+    const result = calculateComparison(12.5, input({ roundTrip: true, includeChargingLosses: false }), cars);
     expect(result.gasolineCost).toBeCloseTo(35);
     expect(result.electricCost).toBeCloseTo(6.5);
     expect(result.cheaper).toBe('electric');
   });
 
+  it('adds charging losses to the electric cost when on', () => {
+    // 25 km: 6,50 kr / 0,85 ≈ 7,65 kr. Gasoline is unaffected.
+    const result = calculateComparison(12.5, input({ roundTrip: true, includeChargingLosses: true }), cars);
+    expect(result.gasolineCost).toBeCloseTo(35);
+    expect(result.electricCost).toBeCloseTo(7.647, 3);
+  });
+
   it('uses the adjusted electric consumption', () => {
-    const result = calculateComparison(100, input({ kWhPer100Km: 30, electricityPrice: 15 }), cars);
+    const result = calculateComparison(
+      100,
+      input({ kWhPer100Km: 30, electricityPrice: 15, includeChargingLosses: false }),
+      cars,
+    );
     expect(result.electricCost).toBeCloseTo(450);
     expect(result.cheaper).toBe('gasoline');
   });
@@ -141,9 +171,17 @@ describe('buildResults', () => {
 
 describe('buildBreakEven', () => {
   it('formats both break-even prices', () => {
-    expect(buildBreakEven(input(), cars)).toEqual([
+    expect(buildBreakEven(input({ includeChargingLosses: false }), cars)).toEqual([
       `Electric is cheaper while electricity is below 10,77${nbsp}kr/kWh`,
       `Gasoline is cheaper while gasoline is below 3,25${nbsp}kr/l`,
+    ]);
+  });
+
+  it('includes charging losses when on', () => {
+    // 17,50 × 8 × 0,85 / 13 ≈ 9,15 and 2 × (13 / 0,85) / 8 ≈ 3,82
+    expect(buildBreakEven(input({ includeChargingLosses: true }), cars)).toEqual([
+      `Electric is cheaper while electricity is below 9,15${nbsp}kr/kWh`,
+      `Gasoline is cheaper while gasoline is below 3,82${nbsp}kr/l`,
     ]);
   });
 
@@ -171,7 +209,10 @@ describe('buildTripCostView', () => {
   });
 
   it('shows results for a valid distance', () => {
-    const view = buildTripCostView(input({ distance: '12,5', distanceTouched: true, roundTrip: true }), cars);
+    const view = buildTripCostView(
+      input({ distance: '12,5', distanceTouched: true, roundTrip: true, includeChargingLosses: false }),
+      cars,
+    );
     expect(view.distanceError).toBeNull();
     expect(view.results?.gasoline.cost).toBe(`35,00${nbsp}kr`);
     expect(view.results?.electric.cost).toBe(`6,50${nbsp}kr`);
@@ -179,7 +220,22 @@ describe('buildTripCostView', () => {
   });
 
   it('shows a tie at the break-even electricity price', () => {
-    const view = buildTripCostView(input({ distance: '100', electricityPrice: (17.5 * 8) / 13 }), cars);
+    const view = buildTripCostView(
+      input({ distance: '100', electricityPrice: (17.5 * 8) / 13, includeChargingLosses: false }),
+      cars,
+    );
     expect(view.results?.summary).toBe(TEXT.tie);
+  });
+
+  it('shows a tie at the break-even electricity price with charging losses', () => {
+    const view = buildTripCostView(
+      input({ distance: '100', electricityPrice: (17.5 * 8 * 0.85) / 13, includeChargingLosses: true }),
+      cars,
+    );
+    expect(view.results?.summary).toBe(TEXT.tie);
+  });
+
+  it('shows the charging losses hint', () => {
+    expect(buildTripCostView(input(), cars).chargingLossesHint).toContain(`15${nbsp}%`);
   });
 });

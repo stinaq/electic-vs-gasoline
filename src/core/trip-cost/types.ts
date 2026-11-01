@@ -50,4 +50,5 @@ export type TripCostInput = {
   gasolinePrice: number;
   electricityPrice: number;
   kWhPer100Km: number;
+  includeChargingLosses: boolean;
 };

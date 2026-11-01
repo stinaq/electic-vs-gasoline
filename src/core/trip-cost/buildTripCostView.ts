@@ -1,6 +1,8 @@
 import {
+  CHARGING_EFFICIENCY,
   DEFAULT_CONSUMPTION_DECIMALS,
   DEFAULT_DISTANCE,
+  DEFAULT_INCLUDE_CHARGING_LOSSES,
   DEFAULT_ROUND_TRIP,
   ELECTRIC_CONSUMPTION_UNIT,
   ELECTRICITY_PRICE_RANGE,
@@ -9,12 +11,15 @@ import {
   GASOLINE_PRICE_RANGE,
   GASOLINE_PRICE_UNIT,
   MONEY_DECIMALS,
+  PERCENT_DECIMALS,
   TEXT,
   TIE_THRESHOLD,
 } from '../constants';
-import { decimalsForStep, formatMoney, formatWithUnit } from '../format/formatNumber';
+import { decimalsForStep, formatMoney, formatPercent, formatWithUnit } from '../format/formatNumber';
 import { calculateElectricityBreakEven, calculateGasolineBreakEven } from './calculateBreakEven';
 import {
+  calculateChargedConsumption,
+  calculateChargingLossShare,
   calculateElectricCost,
   calculateGasolineCost,
   calculateTripDistance,
@@ -62,6 +67,8 @@ export type TripCostView = {
   electricityPrice: SliderView;
   gasolineCar: CarView;
   electricCar: CarView;
+  /** Explains charging losses next to the toggle. */
+  chargingLossesHint: string;
   /** Null when the inputs are invalid: results are hidden, not shown as 0. */
   results: ResultsView | null;
   breakEven: BreakEvenView;
@@ -79,7 +86,15 @@ export const createInitialInput = (cars: CarPair): TripCostInput => ({
   gasolinePrice: GASOLINE_PRICE_RANGE.defaultValue,
   electricityPrice: ELECTRICITY_PRICE_RANGE.defaultValue,
   kWhPer100Km: cars.electric.consumptionPer100Km,
+  includeChargingLosses: DEFAULT_INCLUDE_CHARGING_LOSSES,
 });
+
+/** Electricity paid for per 100 km: the car's consumption, plus charging losses when included. */
+export const chargedConsumptionOf = (input: TripCostInput): number =>
+  calculateChargedConsumption(input.kWhPer100Km, input.includeChargingLosses, CHARGING_EFFICIENCY);
+
+export const buildChargingLossesHint = (chargingEfficiency: number): string =>
+  TEXT.chargingLossesHint(formatPercent(calculateChargingLossShare(chargingEfficiency), PERCENT_DECIMALS));
 
 export const buildPriceSlider = (value: number, range: SliderRange, unit: string): SliderView => ({
   value,
@@ -138,8 +153,9 @@ export const buildResults = (comparison: CostComparison, cars: CarPair): Results
 
 export const buildBreakEven = (input: TripCostInput, cars: CarPair): BreakEvenView => {
   const litersPer100Km = cars.gasoline.consumptionPer100Km;
-  const electricity = calculateElectricityBreakEven(input.gasolinePrice, litersPer100Km, input.kWhPer100Km);
-  const gasoline = calculateGasolineBreakEven(input.electricityPrice, input.kWhPer100Km, litersPer100Km);
+  const kWhPer100Km = chargedConsumptionOf(input);
+  const electricity = calculateElectricityBreakEven(input.gasolinePrice, litersPer100Km, kWhPer100Km);
+  const gasoline = calculateGasolineBreakEven(input.electricityPrice, kWhPer100Km, litersPer100Km);
   const notes = [
     electricity === null
       ? null
@@ -153,7 +169,7 @@ export const calculateComparison = (distance: number, input: TripCostInput, cars
   const tripDistance = calculateTripDistance(distance, input.roundTrip);
   return compareCosts(
     calculateGasolineCost(tripDistance, cars.gasoline.consumptionPer100Km, input.gasolinePrice),
-    calculateElectricCost(tripDistance, input.kWhPer100Km, input.electricityPrice),
+    calculateElectricCost(tripDistance, chargedConsumptionOf(input), input.electricityPrice),
     TIE_THRESHOLD,
   );
 };
@@ -167,6 +183,7 @@ export const buildTripCostView = (input: TripCostInput, cars: CarPair): TripCost
     electricityPrice: buildPriceSlider(input.electricityPrice, ELECTRICITY_PRICE_RANGE, ELECTRICITY_PRICE_UNIT),
     gasolineCar: buildCarView(cars.gasoline, cars.gasoline.consumptionPer100Km),
     electricCar: buildCarView(cars.electric, input.kWhPer100Km),
+    chargingLossesHint: buildChargingLossesHint(CHARGING_EFFICIENCY),
     results: distance.ok ? buildResults(calculateComparison(distance.value, input, cars), cars) : null,
     breakEven: buildBreakEven(input, cars),
   };

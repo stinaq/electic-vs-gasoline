@@ -14,6 +14,14 @@ export const formatWithUnit = (value: number, decimals: number, unit: string): s
 /** Formats a money amount, e.g. `1 234,50 kr`. */
 export const formatMoney = (value: number): string => formatWithUnit(value, MONEY_DECIMALS, CURRENCY_UNIT);
 
+/** Formats a share (0–1) as a percentage in the app locale, e.g. 0.15 -> `15 %`. */
+export const formatPercent = (share: number, decimals: number): string =>
+  new Intl.NumberFormat(LOCALE, {
+    style: 'percent',
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(share);
+
 /** Number of decimals implied by a slider step, e.g. 0.05 -> 2, 0.1 -> 1, 1 -> 0. */
 export const decimalsForStep = (step: number): number => {
   const [, fraction = ''] = String(step).split('.');

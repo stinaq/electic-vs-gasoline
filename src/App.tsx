@@ -77,6 +77,13 @@ export const App = () => {
             onChange={trip.onElectricConsumptionChange}
           />
         )}
+        <Checkbox
+          id="charging-losses"
+          label={text.chargingLossesLabel}
+          hint={trip.chargingLossesHint}
+          checked={trip.includeChargingLosses}
+          onChange={trip.onChargingLossesChange}
+        />
       </Section>
 
       {results && (

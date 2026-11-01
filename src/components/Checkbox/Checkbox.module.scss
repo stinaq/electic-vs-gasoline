@@ -1,3 +1,9 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
 .checkbox {
   display: inline-flex;
   align-items: center;
@@ -9,33 +15,45 @@
 .input {
   appearance: none;
   position: relative;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   margin: 0;
   flex-shrink: 0;
-  background: var(--color-paper);
+  background: var(--color-cream);
   border: var(--line-bold) solid var(--color-ink);
-  border-radius: 4px 7px 3px 6px / 6px 3px 7px 4px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-pop-small);
   cursor: pointer;
 
-  // Hand-drawn check that overshoots the box a little.
+  &:checked {
+    background: var(--color-red);
+  }
+
   &:checked::after {
     content: '';
     position: absolute;
-    left: -1px;
-    top: -9px;
-    width: 26px;
-    height: 26px;
-    background-color: var(--color-ink);
+    inset: 2px;
+    background-color: var(--color-cream);
     mask: var(--mark-check) no-repeat center / contain;
   }
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 4px var(--color-highlighter);
+    box-shadow:
+      var(--shadow-pop-small),
+      0 0 0 4px var(--color-blue);
   }
 }
 
 .label {
   font-size: 1rem;
+  font-weight: 700;
+}
+
+// Indented to line up with the label text, past the 28px box.
+.hint {
+  margin: 0;
+  padding-left: calc(28px + var(--space-3));
+  color: var(--color-ink-soft);
+  font-size: 0.9rem;
 }

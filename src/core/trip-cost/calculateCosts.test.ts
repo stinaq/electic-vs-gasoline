@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { ELECTRICITY_PRICE_RANGE, GASOLINE_PRICE_RANGE, TIE_THRESHOLD } from '../constants';
+import { CHARGING_EFFICIENCY, ELECTRICITY_PRICE_RANGE, GASOLINE_PRICE_RANGE, TIE_THRESHOLD } from '../constants';
 import {
+  calculateChargedConsumption,
+  calculateChargingLossShare,
   calculateElectricCost,
   calculateGasolineCost,
   calculateTripDistance,
@@ -28,6 +30,33 @@ describe('calculateGasolineCost', () => {
   it('works at the slider extremes', () => {
     expect(calculateGasolineCost(100, 8, GASOLINE_PRICE_RANGE.min)).toBeCloseTo(96);
     expect(calculateGasolineCost(100, 8, GASOLINE_PRICE_RANGE.max)).toBeCloseTo(240);
+  });
+});
+
+describe('calculateChargedConsumption', () => {
+  it('returns the car consumption as-is without charging losses', () => {
+    expect(calculateChargedConsumption(13, false, 0.85)).toBe(13);
+  });
+
+  it('divides by the charging efficiency with charging losses', () => {
+    // 13 kWh out of the battery needs 13 / 0,85 ≈ 15,29 kWh from the wall
+    expect(calculateChargedConsumption(13, true, 0.85)).toBeCloseTo(15.294, 3);
+    expect(calculateChargedConsumption(30, true, CHARGING_EFFICIENCY)).toBeCloseTo(35.294, 3);
+  });
+
+  it('changes nothing at 100 % efficiency', () => {
+    expect(calculateChargedConsumption(13, true, 1)).toBeCloseTo(13);
+  });
+
+  it('makes the paid-for energy times the efficiency equal the car consumption', () => {
+    expect(calculateChargedConsumption(21.7, true, 0.85) * 0.85).toBeCloseTo(21.7);
+  });
+});
+
+describe('calculateChargingLossShare', () => {
+  it('is the part of the charged electricity that never reaches the battery', () => {
+    expect(calculateChargingLossShare(0.85)).toBeCloseTo(0.15);
+    expect(calculateChargingLossShare(1)).toBe(0);
   });
 });
 
@@ -97,5 +126,12 @@ describe('compareCosts', () => {
     expect(result.cheaper).toBe('electric');
     expect(result.electricCost).toBe(0);
     expect(result.saving).toBeCloseTo(35);
+  });
+
+  it('costs more for the electric car with charging losses', () => {
+    // 100 km at 2 kr/kWh: 26 kr without losses, 26 / 0,85 ≈ 30,59 kr with
+    const withLosses = calculateElectricCost(100, calculateChargedConsumption(13, true, 0.85), 2);
+    expect(withLosses).toBeCloseTo(30.588, 3);
+    expect(compareCosts(140, withLosses, TIE_THRESHOLD).saving).toBeCloseTo(109.412, 3);
   });
 });
