@@ -6,7 +6,21 @@ electric car, based on the current gasoline and electricity prices.
 Enter the trip distance (optionally round trip) and slide the gasoline and electricity prices.
 The app shows live which car is cheaper and at what price the other one would take over.
 
-Built with Vite, React, TypeScript and SCSS modules. For contributors and AI agents:
+Built with Vite, React, TypeScript and SCSS modules.
+
+## Getting started
+
+```sh
+npm install
+npm run dev     # start the dev server
+npm run test    # unit tests (Vitest)
+npm run lint    # ESLint, including the layer rules
+npm run build   # type check + production build
+```
+
+## Docs
+
+For contributors and AI agents:
 
 - [AGENTS.md](AGENTS.md): entry point and workflow
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): how the code is structured

@@ -1,0 +1,39 @@
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  align-self: flex-start;
+  cursor: pointer;
+}
+
+.input {
+  appearance: none;
+  position: relative;
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  flex-shrink: 0;
+  background: var(--color-paper);
+  border: var(--line-bold) solid var(--color-ink);
+  border-radius: 4px 7px 3px 6px / 6px 3px 7px 4px;
+  cursor: pointer;
+
+  &:checked::after {
+    content: '✓';
+    position: absolute;
+    left: 2px;
+    top: -14px;
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--color-highlighter);
+  }
+}
+
+.label {
+  font-size: 1.1rem;
+}

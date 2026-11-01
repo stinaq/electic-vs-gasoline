@@ -20,10 +20,13 @@ All logic lives in `core/trip-cost/`, with shared formatting in `core/format/`.
 
 ## Cars (v1)
 
-| Car | Type | Consumption | Editable |
-|---|---|---|---|
-| Volvo V70 (2009) | gasoline | 8,0 l/100 km | No. Shown as read-only text |
-| Nissan Leaf (2022, 40 kWh) | electric | 13,0 kWh/100 km (default) | Yes. Slider 12–30 kWh/100 km, step 0,1 |
+| Car | Short name | Type | Consumption | Editable |
+|---|---|---|---|---|
+| Volvo V70 (2009) | Volvo V70 | gasoline | 8,0 l/100 km | No. Shown as read-only text |
+| Nissan Leaf (2022, 40 kWh) | Nissan Leaf | electric | 13,0 kWh/100 km (default) | Yes. Slider 12–30 kWh/100 km, step 0,1 |
+
+The full name is used on labels and result cards. The short name is used in running text
+(the summary line).
 
 Values are owner estimates and can be refined later in `core/vehicles.ts`.
 
@@ -80,7 +83,8 @@ Formulas (pure, tested):
 Display:
 
 - One result card per car with its trip cost. The cheaper car's card is highlighted.
-- A summary line: "Nissan Leaf is cheaper by 147,20 kr", or "Both cost the same" for a tie.
+- A summary line using the cheaper car's short name: "Nissan Leaf is cheaper by 147,20 kr",
+  or "Both cost the same" for a tie.
 
 **Done when:** tests cover both winners, a tie, round trip, and the slider extremes (e.g. electricity 0 kr).
 

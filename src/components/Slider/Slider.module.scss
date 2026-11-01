@@ -1,0 +1,91 @@
+$thumb-size: 28px;
+$track-height: 7px;
+
+@mixin track {
+  height: $track-height;
+  background: var(--color-ink);
+  // Slightly uneven, static edges.
+  border-radius: 40% 60% 55% 45% / 60% 40% 60% 40%;
+}
+
+@mixin thumb {
+  width: $thumb-size;
+  height: $thumb-size;
+  background: var(--color-paper);
+  border: var(--line-bold) solid var(--color-ink);
+  border-radius: 52% 48% 55% 45% / 45% 55% 48% 52%;
+  cursor: grab;
+}
+
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.label {
+  font-size: 1.1rem;
+}
+
+.value {
+  min-width: 13ch;
+  text-align: right;
+  white-space: nowrap;
+  font-size: 1.3rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.input {
+  appearance: none;
+  width: 100%;
+  height: $thumb-size + 8px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    @include track;
+  }
+
+  &::-moz-range-track {
+    @include track;
+  }
+
+  &::-webkit-slider-thumb {
+    @include thumb;
+    appearance: none;
+    margin-top: calc(($track-height - $thumb-size) / 2);
+  }
+
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+
+  &:active::-webkit-slider-thumb {
+    cursor: grabbing;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  // Highlighter scribble ring.
+  &:focus-visible::-webkit-slider-thumb {
+    box-shadow:
+      0 0 0 4px var(--color-highlighter),
+      1px -1px 0 7px color-mix(in srgb, var(--color-highlighter) 55%, transparent);
+  }
+
+  &:focus-visible::-moz-range-thumb {
+    box-shadow:
+      0 0 0 4px var(--color-highlighter),
+      1px -1px 0 7px color-mix(in srgb, var(--color-highlighter) 55%, transparent);
+  }
+}

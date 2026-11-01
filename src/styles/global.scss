@@ -1,0 +1,72 @@
+:root {
+  // Colors
+  --color-paper: #f5ecd2;
+  --color-paper-shade: #ebdfbd;
+  --color-ink: #1c1a17;
+  --color-pencil: #6e675a;
+  --color-highlighter: #ffe14d;
+  --color-red-pen: #c8372d;
+
+  // Typography
+  --font-heading: 'Caveat', cursive;
+  --font-body: 'Patrick Hand', sans-serif;
+
+  // Lines
+  --line-bold: 3px;
+  --line-thin: 1.5px;
+  --shadow-offset: 3px 4px 0 var(--color-ink);
+
+  // Spacing
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+
+  // Motion
+  --duration-draw: 200ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 19px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  line-height: 1.4;
+  background-color: var(--color-paper);
+  // Barely visible paper grain.
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+input,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,27 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.heading {
+  position: relative;
+  align-self: flex-start;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  line-height: 1.1;
+  transform: rotate(-0.6deg);
+
+  // Hand-drawn underline (decorative line, so the ink filter is allowed here).
+  &::after {
+    content: '';
+    position: absolute;
+    left: -4px;
+    right: -10px;
+    bottom: -2px;
+    height: var(--line-bold);
+    background: var(--color-ink);
+    border-radius: 40% 60% 30% 70% / 50% 40% 60% 50%;
+    filter: url(#ink);
+  }
+}
