@@ -11,3 +11,4 @@ Built with Vite, React, TypeScript and SCSS modules. For contributors and AI age
 - [AGENTS.md](AGENTS.md): entry point and workflow
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): how the code is structured
 - [docs/FEATURES.md](docs/FEATURES.md): what the app does
+- [docs/DESIGN.md](docs/DESIGN.md): how it looks

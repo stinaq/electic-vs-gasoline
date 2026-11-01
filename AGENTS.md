@@ -14,9 +14,11 @@ overtakes the other.
 |---|---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | **How** the code is structured: layers, folders, rules, conventions, testing | the structure or a rule changes |
 | [docs/FEATURES.md](docs/FEATURES.md) | **What** the app does: features, inputs, outputs, domain formulas, acceptance criteria | behavior changes |
+| [docs/DESIGN.md](docs/DESIGN.md) | How it **looks**: feeling, tokens, hand-drawn techniques, key elements | the visual design changes |
 
-Keep them separate. Architecture docs never describe specific features, and feature docs never
-prescribe structure (they may name the core module a feature lives in).
+Keep them separate. Architecture docs never describe specific features, feature docs never
+prescribe structure (they may name the core module a feature lives in), and design docs only
+cover the visual layer.
 
 ## Workflow for agents
 
