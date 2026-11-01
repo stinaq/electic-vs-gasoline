@@ -4,26 +4,13 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-5) var(--space-4);
-  background: var(--color-paper-shade);
-  box-shadow: var(--shadow-offset);
-  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-  transform: rotate(-0.6deg);
-
-  // Border drawn on a pseudo-element so the rough-ink filter never touches the text.
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: var(--line-bold) solid var(--color-ink);
-    border-radius: inherit;
-    filter: url(#ink);
-    pointer-events: none;
-  }
-
-  &:nth-child(even) {
-    transform: rotate(0.8deg);
-    border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
-  }
+  background-color: var(--color-cream);
+  border: var(--line-bold) solid var(--color-ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop-small);
+  transition:
+    transform var(--duration-pop) ease-out,
+    box-shadow var(--duration-pop) ease-out;
 }
 
 .title {
@@ -41,42 +28,52 @@
   font-variant-numeric: tabular-nums;
 }
 
+// Yellow marker block behind the winning cost; grows in when the winner changes.
 .stroke {
   padding: 0 var(--space-1);
-  background-image: linear-gradient(
-    100deg,
-    transparent 1%,
-    var(--color-highlighter) 3%,
-    var(--color-highlighter) 96%,
-    transparent 99%
-  );
+  background-image: linear-gradient(var(--color-yellow), var(--color-yellow));
   background-repeat: no-repeat;
-  background-position: left 60%;
-  background-size: 0% 70%;
-  transition: background-size var(--duration-draw) ease-out;
+  background-position: left 70%;
+  background-size: 0% 55%;
+  transition: background-size var(--duration-pop) ease-out;
 }
 
 .highlighted {
   composes: card;
+  // Ben-Day dots in pink over the cream.
+  background-image: radial-gradient(color-mix(in srgb, var(--color-pink) 60%, transparent) 2.5px, transparent 3px);
+  background-size: var(--dots-size);
+  box-shadow: var(--shadow-pop);
+  transform: translate(-3px, -3px);
 
   .title {
-    padding-right: var(--space-4);
+    padding-right: var(--space-6);
   }
 
   .stroke {
-    background-size: 100% 70%;
+    background-size: 100% 55%;
   }
 
-  // Hand-drawn check mark next to the winner.
+  // Red starburst with a cream check mark on the top-right corner.
+  &::before,
   &::after {
     content: '';
     position: absolute;
-    top: -22px;
-    right: -12px;
-    width: 48px;
-    height: 48px;
-    background-color: var(--color-ink);
-    mask: var(--mark-check) no-repeat center / contain;
-    transform: rotate(6deg);
+    top: -26px;
+    right: -20px;
+    width: 64px;
+    height: 64px;
+  }
+
+  &::before {
+    background: var(--color-ink);
+    clip-path: var(--shape-burst);
+    transform: translate(3px, 3px) rotate(10deg);
+  }
+
+  &::after {
+    background: var(--mark-check-cream) no-repeat center / 50%, var(--color-red);
+    clip-path: var(--shape-burst);
+    transform: rotate(10deg);
   }
 }

@@ -1,8 +1,39 @@
+// The answer, in a comic speech bubble.
 .summary {
+  position: relative;
+  margin-top: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-cream);
+  border: var(--line-bold) solid var(--color-ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-pop-small);
   font-family: var(--font-heading);
   font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  font-weight: 900;
+  line-height: 1.25;
   text-align: center;
+
+  // Bubble tail pointing up at the cards.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    border-style: solid;
+    border-color: transparent;
+  }
+
+  &::before {
+    top: -26px;
+    margin-left: -16px;
+    border-width: 0 16px 26px;
+    border-bottom-color: var(--color-ink);
+  }
+
+  &::after {
+    top: -17px;
+    margin-left: -10px;
+    border-width: 0 10px 17px;
+    border-bottom-color: var(--color-cream);
+  }
 }

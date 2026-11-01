@@ -1,20 +1,28 @@
+// Pop art palette, picked from the Duroc color-block reference (docs/image copy 2.png).
 :root {
   // Colors
-  --color-paper: #f5e9e7;
-  --color-paper-shade: #cccdc7;
-  --color-ink: #5a322a;
-  --color-pencil: #6e6957;
-  --color-highlighter: #e4a499;
-  --color-red-pen: #a93a2e;
+  --color-blue: #4f63b0;
+  --color-blue-light: #8fa1e0;
+  --color-yellow: #f2d65c;
+  --color-pink: #f19a96;
+  --color-red: #c8352c;
+  --color-cream: #fff6e6;
+  --color-ink: #1c1f3f;
+  --color-ink-soft: #3d3f63;
 
   // Typography
-  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-heading: 'Rubik', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
 
   // Lines
-  --line-bold: 3px;
-  --line-thin: 1.5px;
-  --shadow-offset: 3px 4px 0 var(--color-ink);
+  --line-bold: 4px;
+  --line-thin: 2px;
+  --shadow-pop: 6px 6px 0 var(--color-ink);
+  --shadow-pop-small: 3px 3px 0 var(--color-ink);
+  --radius: 18px;
+
+  // Ben-Day dots, used as a background-image layer on top of a flat color.
+  --dots-size: 14px 14px;
 
   // Spacing
   --space-1: 4px;
@@ -24,11 +32,14 @@
   --space-5: 24px;
   --space-6: 40px;
 
-  // Marks: hand-drawn shapes used as masks, so they take any color via background-color.
-  --mark-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 17c3 2 6 6 8 10 4-9 9-17 17-23' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  // Marks: shapes used as masks, so they take any color via background-color.
+  --mark-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M5 17l7 8L27 7' fill='none' stroke='%23000' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  // Same check in cream, for painting on top of a fill where a mask can't be used.
+  --mark-check-cream: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M5 17l7 8L27 7' fill='none' stroke='%23fff6e6' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --shape-burst: polygon(50% 0%, 61% 18%, 82% 9%, 79% 31%, 100% 38%, 84% 54%, 97% 73%, 75% 76%, 71% 98%, 52% 85%, 33% 100%, 27% 78%, 4% 77%, 15% 57%, 0% 39%, 21% 31%, 18% 9%, 39% 18%);
 
   // Motion
-  --duration-draw: 200ms;
+  --duration-pop: 200ms;
 }
 
 *,
@@ -48,9 +59,10 @@ body {
   font-family: var(--font-body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  background-color: var(--color-paper);
-  // Barely visible paper grain.
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-color: var(--color-blue);
+  // Ben-Day dots over the whole page.
+  background-image: radial-gradient(color-mix(in srgb, var(--color-blue-light) 55%, transparent) 2.5px, transparent 3px);
+  background-size: var(--dots-size);
 }
 
 h1,

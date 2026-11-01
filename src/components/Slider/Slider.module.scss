@@ -1,19 +1,21 @@
-$thumb-size: 28px;
-$track-height: 7px;
+$thumb-size: 30px;
+$track-height: 14px;
 
 @mixin track {
   height: $track-height;
-  background: var(--color-ink);
-  // Slightly uneven, static edges.
-  border-radius: 40% 60% 55% 45% / 60% 40% 60% 40%;
+  background: var(--color-cream);
+  border: var(--line-thin) solid var(--color-ink);
+  border-radius: 999px;
+  box-shadow: inset 0 3px 0 color-mix(in srgb, var(--color-ink) 15%, transparent);
 }
 
 @mixin thumb {
   width: $thumb-size;
   height: $thumb-size;
-  background: var(--color-paper);
+  background: var(--color-red);
   border: var(--line-bold) solid var(--color-ink);
-  border-radius: 52% 48% 55% 45% / 45% 55% 48% 52%;
+  border-radius: 50%;
+  box-shadow: var(--shadow-pop-small);
   cursor: grab;
 }
 
@@ -32,18 +34,24 @@ $track-height: 7px;
 
 .label {
   font-size: 1rem;
+  font-weight: 700;
 }
 
 .hint {
-  color: var(--color-pencil);
+  color: var(--color-ink-soft);
   font-size: 0.9rem;
 }
 
+// Value in a little ink tag.
 .value {
   min-width: 13ch;
+  padding: var(--space-1) var(--space-3);
   text-align: right;
   white-space: nowrap;
-  font-size: 1.1rem;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  border-radius: 999px;
+  font-size: 1.05rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -51,7 +59,7 @@ $track-height: 7px;
 .input {
   appearance: none;
   width: 100%;
-  height: $thumb-size + 8px;
+  height: $thumb-size + 10px;
   margin: 0;
   background: transparent;
   cursor: pointer;
@@ -67,7 +75,8 @@ $track-height: 7px;
   &::-webkit-slider-thumb {
     @include thumb;
     appearance: none;
-    margin-top: calc(($track-height - $thumb-size) / 2);
+    // The track's border shifts its content box, so center against the outer height.
+    margin-top: calc(($track-height - $thumb-size) / 2 - 2px);
   }
 
   &::-moz-range-thumb {
@@ -82,16 +91,16 @@ $track-height: 7px;
     outline: none;
   }
 
-  // Highlighter scribble ring.
+  // Cream + ink double ring, visible on every section color.
   &:focus-visible::-webkit-slider-thumb {
     box-shadow:
-      0 0 0 4px var(--color-highlighter),
-      1px -1px 0 7px color-mix(in srgb, var(--color-highlighter) 55%, transparent);
+      0 0 0 4px var(--color-cream),
+      0 0 0 7px var(--color-ink);
   }
 
   &:focus-visible::-moz-range-thumb {
     box-shadow:
-      0 0 0 4px var(--color-highlighter),
-      1px -1px 0 7px color-mix(in srgb, var(--color-highlighter) 55%, transparent);
+      0 0 0 4px var(--color-cream),
+      0 0 0 7px var(--color-ink);
   }
 }

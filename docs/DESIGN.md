@@ -5,141 +5,142 @@ For behavior, see [FEATURES.md](FEATURES.md).
 
 ## Feeling
 
-**Modern type on a sketched page.** The text is clean and contemporary. The lines around it
-(borders, underlines, sliders, marks) look drawn with a dark brown marker on blush-white paper.
+**Pop art color blocks.** Flat tiles of mustard yellow, salmon pink and periwinkle blue with
+thick navy outlines, hard offset shadows and comic-book halftone dots. The reference is the
+Duroc color-block grid in [image copy 2.png](image%20copy%202.png).
 
-Three words to settle every design question: **hand-made, bold, clear.**
+Three words to settle every design question: **fun, bold, clear.**
 
-- Hand-made: lines wobble a little and are never perfectly straight. Text is never hand-made:
-  it is set in a modern sans-serif and stays straight.
-- Bold: thick dark ink, big numbers, high contrast.
-- Clear: the sketch style never gets in the way of reading the answer. Readability wins every
+- Fun: stickers, starbursts, speech bubbles, dots. It should make you smile.
+- Bold: thick outlines, chunky type, big numbers, saturated flat color.
+- Clear: the fun never gets in the way of reading the answer. Readability wins every
   conflict with charm.
 
 ## Design tokens
 
 All tokens are CSS custom properties in `src/styles/global.scss`. Components use the variables
-and never hardcode colors, fonts or line widths.
+and never hardcode colors, fonts or line widths (plain `#fff` for text on red/blue stickers is
+the one exception).
 
 ### Colors
 
-The palette combines two Figma palettes, "Graphite" and "Driftwood pearl morning".
+| Token | Value | Use |
+|---|---|---|
+| `--color-blue` | `#4f63b0` | Page background, sticker fill |
+| `--color-blue-light` | `#8fa1e0` | Halftone dots on the page |
+| `--color-yellow` | `#f2d65c` | Section fill, winner marker behind the cost |
+| `--color-pink` | `#f19a96` | Section fill, halftone dots on the winner card |
+| `--color-red` | `#c8352c` | Accent: sticker headings, slider thumb, checkbox, starburst, errors |
+| `--color-cream` | `#fff6e6` | Section fill, cards, inputs, title text |
+| `--color-ink` | `#1c1f3f` | Text, outlines, shadows (navy) |
+| `--color-ink-soft` | `#3d3f63` | Secondary text: hints, units, read-only values |
 
-| Token | Value | Use | Contrast on paper |
-|---|---|---|---|
-| `--color-paper` | `#f5e9e7` | Page background (blush-white paper) | – |
-| `--color-paper-shade` | `#cccdc7` | Cards, subtle fills | – |
-| `--color-ink` | `#5a322a` | Text, lines, borders (dark brown marker ink) | 9.2:1 |
-| `--color-pencil` | `#6e6957` | Secondary text, hints, units. The palette's `#837d68`, darkened to pass 4.5:1 | 4.6:1 |
-| `--color-highlighter` | `#e4a499` | Winner highlight (salmon marker stroke behind text) | ink on it 5.2:1 |
-| `--color-red-pen` | `#a93a2e` | Validation errors only. Darkened terracotta red | 5.3:1 |
+Contrast (WCAG AA, 4.5:1 for text):
 
-There are no separate colors per car. The winner is shown with ink and highlighter, not a brand color.
+| Pair | Ratio |
+|---|---|
+| ink on yellow / pink / cream | 11.0 / 7.4 / 14.9 |
+| ink-soft on yellow / pink / cream | 7.0 / 4.7 / 9.4 |
+| white on red / blue | 5.2 / 5.6 |
+| yellow on ink | 11.0 |
+
+Secondary text (`--color-ink-soft`) is never placed on blue.
 
 ### Typography
 
 | Token | Font | Use |
 |---|---|---|
-| `--font-heading` | **Space Grotesk** (700) | Title, section and card headings, the summary line |
+| `--font-heading` | **Rubik** (700, 900) | Title, section stickers, card headings, the summary |
 | `--font-body` | **Inter** (400, 500, 700) | Labels, values, body text, numbers |
 
-- Both are free Google Fonts, loaded externally with a Google Fonts `<link>` in `index.html`
-  (with `preconnect` and `display=swap`). Fallback: `system-ui, sans-serif`.
-- No handwritten fonts. The hand-made feeling comes from the lines only.
-- Numbers change while sliding. Give value labels a fixed `min-width` (in `ch`) so the layout
-  doesn't jump.
-- Base size 17px. Headings use a slightly negative `letter-spacing` (about `-0.01em` to `-0.02em`).
+- Both are free Google Fonts, loaded with a `<link>` in `index.html` (with `preconnect` and
+  `display=swap`). Fallback: `system-ui, sans-serif`.
+- Title and section stickers are uppercase Rubik Black. Long text (summary, notes) is never uppercase.
+- Numbers change while sliding. Give value labels a fixed `min-width` (in `ch`) and
+  `tabular-nums` so the layout doesn't jump.
+- Base size 17px.
 
-### Lines
+### Lines and shapes
 
 | Token | Value | Use |
 |---|---|---|
-| `--line-bold` | `3px` | Card borders, slider track |
-| `--line-thin` | `1.5px` | Inputs, dividers |
-| `--shadow-offset` | `3px 4px 0 var(--color-ink)` | Solid "drawn" offset shadow on cards |
+| `--line-bold` | `4px` | Section, card, input and sticker outlines |
+| `--line-thin` | `2px` | Slider track |
+| `--shadow-pop` | `6px 6px 0 ink` | Sections, the winner card |
+| `--shadow-pop-small` | `3px 3px 0 ink` | Cards, inputs, stickers, thumb |
+| `--radius` | `18px` | Sections and cards. Pills and stickers use `999px` |
+| `--dots-size` | `14px 14px` | Halftone dot grid (a `radial-gradient` background layer) |
+| `--mark-check`, `--mark-check-cream` | SVG | Check mark as mask / as cream image |
+| `--shape-burst` | `polygon(...)` | Starburst `clip-path` for the winner badge |
 
 ### Spacing
 
-Use a simple scale: `--space-1` to `--space-6` (4, 8, 12, 16, 24, 40 px). The layout is one
-centered column, max about 640px wide, and it works on mobile first.
-
-## Hand-drawn techniques (CSS only)
-
-**Lines look hand-drawn but never shake.** All irregularity is static: nothing jitters, wiggles
-or re-randomizes on render, hover or while sliding. Use these in order of preference, and stick
-to cheap tricks before heavy ones.
-
-1. **Uneven borders:** an irregular `border-radius`, e.g.
-   `border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;`. Vary the values per component.
-2. **Slight rotation:** cards get `transform: rotate(-0.6deg)` to `rotate(0.8deg)`.
-   Never rotate text on its own (headings, labels, summary), inputs or sliders.
-3. **Solid offset shadow:** `box-shadow: var(--shadow-offset)` makes things look drawn rather than elevated.
-4. **Paper texture:** a subtle noise on `body` via an inline SVG `feTurbulence` data URI in
-   `global.scss`. Keep it barely visible.
-5. **Rough ink edges (try, keep only if crisp):** one shared, static SVG filter (`feTurbulence`
-   with a fixed `seed` + a low-scale `feDisplacementMap`) defined once in `index.html`, applied with
-   `filter: url(#ink)` to borders and decorative lines only. It gives slightly uneven marker edges.
-   Never animate it, and **never apply it to text** or to the slider thumb.
-
-6. **Hand-drawn marks:** shapes like the check mark are inline SVG paths stored as CSS custom
-   properties in `global.scss` (e.g. `--mark-check`) and applied with `mask` plus
-   `background-color: var(--color-ink)`. Never use a font glyph for a mark.
-
-No drawing libraries (e.g. Rough.js) without asking.
+`--space-1` to `--space-6` (4, 8, 12, 16, 24, 40 px). One centered column, max about 640px
+wide, mobile first.
 
 ## Key elements
 
+### Page
+
+- Blue background with light-blue halftone dots.
+- Title: huge uppercase Rubik Black in cream with stacked navy, red, navy offset text shadows.
+
 ### Sections
 
-- Each section is a hand-drawn ink frame (bold line, wobbly radius, rough-ink edges). Frames do not
-  rotate.
-- The section heading sits on the frame's top-left line and breaks it, like a label on a form:
-  `--font-heading`, bold, on a `--color-paper` background. Headings have no underline.
-- Generous space between sections, so each reads as its own unit.
+- Flat color block with a bold ink outline, `--radius` corners and `--shadow-pop`.
+- Fills cycle yellow, pink, cream (`nth-of-type(3n + …)`).
+- The heading is a pill-shaped sticker on the top edge, tilted `-2deg`, with its own small
+  shadow. Sticker colors cycle with the section: red/white, ink/yellow, blue/white.
 
 ### Sliders
 
-The main interaction, so they must feel good.
+- Styled native `<input type="range">` (accessible, keyboard-friendly).
+- Track: cream pill with an ink outline. Thumb: red circle, bold ink outline, small hard shadow, about 30px.
+- The current value sits in an ink pill tag next to the label, in cream text.
+- Focus: cream + ink double ring around the thumb, visible on every section color.
 
-- Styled native `<input type="range">` (keeps it accessible and keyboard-friendly).
-- Track: a thick ink line with slightly uneven, static edges.
-- Thumb: a hand-drawn ink circle (wobbly border-radius), filled with paper, about 28px for touch.
-- The current value is shown next to the label in `--font-body`, e.g. `17,50 kr/l`.
-- Focus state: a highlighter-colored scribble ring, clearly visible.
+### Inputs and checkboxes
+
+- Cream fill, bold ink outline, rounded, small hard shadow. Focus adds a colored ring.
+- Checked checkbox: red fill with a cream check mark.
 
 ### Result cards
 
-- One card per car: paper-shade fill, bold ink border, wobbly radius, offset shadow and a slight rotation.
-- **Winner:** the cost gets a highlighter stroke behind it, plus a hand-drawn check mark
-  (`--mark-check`) overlapping the card's top-right corner. The loser stays plain, not greyed out.
+- Cream card with a bold outline and small shadow.
+- **Winner:** lifts a few pixels with the bigger shadow, gets pink halftone dots, a yellow marker
+  block behind the cost, and a red starburst with a cream check on the top-right corner.
+  The loser stays plain, not greyed out.
 - **Tie:** both cards are plain, and the summary says they cost the same.
 
 ### Summary and break-even
 
-- Summary line ("Nissan Leaf is cheaper by 147,20 kr") in `--font-heading`, bold, large, centered.
+- Summary: Rubik Black in a cream comic speech bubble whose tail points up at the cards.
   It is the answer, so it is the most prominent text after the costs.
-- Break-even text in `--font-body`, `--color-pencil`, in its own section ("Break-even prices")
-  framed like the others.
+- Break-even notes: body font, `--color-ink-soft`, with a red bar on the left, in their own section.
 
 ### Errors
 
-- Red-pen color, `--font-body`, directly under the field. Optionally a red underline on the
-  field. No icons and no boxes.
+- A red pill sticker with white bold text directly under the field, plus a red outline on the field.
 
 ### Read-only values (Volvo consumption)
 
-- Plain text in pencil color, with no input styling, so it is clearly not editable.
-- Car details such as the engine designation go on a smaller pencil-colored line under the name.
+- Plain text in `--color-ink-soft`, no input styling, so it is clearly not editable.
+- Car details such as the engine designation go on a smaller line under the name.
+
+## Favicon
+
+`public/favicon.svg`: a tile split diagonally yellow/pink, navy outline and offset shadow, with a
+red lightning bolt. Uses the same hex values as the tokens.
 
 ## Motion
 
-- Minimal. When the winner changes, the highlighter stroke may "draw in" (a short width transition
-  of about 200ms).
+- Minimal. When the winner changes, the yellow marker grows in and the card lifts (about 200ms,
+  `--duration-pop`).
 - Respect `prefers-reduced-motion`: no transitions when it is set.
 
 ## Accessibility
 
-- Ink on paper (9.2:1) and on cards (6.8:1) is well above WCAG AA contrast. Pencil on paper must stay at 4.5:1 or above
-  for text. Check this when adjusting colors.
-- The winner must not rely on the highlighter color alone. The text summary and the mark carry it too.
+- Every text/background pair used is at least 4.5:1 (see the contrast table). Check it when
+  adjusting colors.
+- The winner must not rely on color alone. The text summary and the starburst check carry it too.
 - All inputs have real `<label>`s. Sliders are native range inputs.

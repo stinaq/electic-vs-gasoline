@@ -1,4 +1,7 @@
 .note {
-  color: var(--color-pencil);
-  font-size: 0.95rem;
+  padding-left: var(--space-4);
+  border-left: var(--line-bold) solid var(--color-red);
+  color: var(--color-ink-soft);
+  font-size: 1rem;
+  font-weight: 500;
 }

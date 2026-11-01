@@ -12,17 +12,17 @@
 }
 
 .label {
-  color: var(--color-ink);
+  font-weight: 700;
 }
 
-// Read-only: pencil color, no input styling.
+// Read-only: soft ink, no input styling.
 .value {
-  color: var(--color-pencil);
+  color: var(--color-ink-soft);
   font-size: 1.1rem;
   white-space: nowrap;
 }
 
 .detail {
-  color: var(--color-pencil);
+  color: var(--color-ink-soft);
   font-size: 0.9rem;
 }

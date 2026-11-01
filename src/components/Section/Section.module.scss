@@ -1,25 +1,32 @@
-// Each section is a hand-drawn frame. The heading sits on the top line and breaks it,
-// like a label on a form, so it stands out without an underline.
+// Each section is a flat color block with a thick ink outline and a hard shadow.
+// The heading is a sticker that sits on the top edge.
 .section {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   padding: var(--space-6) var(--space-5) var(--space-5);
+  background-color: var(--color-yellow);
+  border: var(--line-bold) solid var(--color-ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
 
-  // Frame on a pseudo-element so the rough-ink filter never touches the content.
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: var(--line-bold) solid var(--color-ink);
-    border-radius: 18px 225px 12px 255px / 255px 14px 225px 18px;
-    filter: url(#ink);
-    pointer-events: none;
+  // Colors cycle like the tiles in the reference grid.
+  &:nth-of-type(3n + 2) {
+    background-color: var(--color-pink);
+
+    .heading {
+      background: var(--color-ink);
+      color: var(--color-yellow);
+    }
   }
 
-  &:nth-of-type(even)::before {
-    border-radius: 225px 16px 255px 12px / 14px 255px 18px 225px;
+  &:nth-of-type(3n + 3) {
+    background-color: var(--color-cream);
+
+    .heading {
+      background: var(--color-blue);
+    }
   }
 }
 
@@ -27,12 +34,17 @@
   position: absolute;
   top: 0;
   left: var(--space-4);
-  transform: translateY(-55%);
-  padding: 0 var(--space-3);
-  background: var(--color-paper);
+  transform: translateY(-55%) rotate(-2deg);
+  padding: var(--space-1) var(--space-4);
+  background: var(--color-red);
+  color: #fff;
+  border: var(--line-bold) solid var(--color-ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-pop-small);
   font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 900;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }

@@ -1,45 +1,55 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .label {
   font-size: 1rem;
+  font-weight: 700;
 }
 
 .inputRow {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-2);
 }
 
 .input {
   width: 8ch;
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3);
   font-size: 1.25rem;
-  font-weight: 500;
-  background: transparent;
-  border: none;
-  border-bottom: var(--line-bold) solid var(--color-ink);
-  border-radius: 0 0 6px 3px / 0 0 4px 2px;
+  font-weight: 700;
+  background: var(--color-cream);
+  border: var(--line-bold) solid var(--color-ink);
+  border-radius: 12px;
+  box-shadow: var(--shadow-pop-small);
 
   &:focus-visible {
     outline: none;
-    background: color-mix(in srgb, var(--color-highlighter) 45%, transparent);
+    box-shadow:
+      var(--shadow-pop-small),
+      0 0 0 4px var(--color-red);
   }
 }
 
 .inputInvalid {
   composes: input;
-  border-bottom-color: var(--color-red-pen);
+  border-color: var(--color-red);
 }
 
 .unit {
-  color: var(--color-pencil);
+  color: var(--color-ink-soft);
+  font-weight: 500;
 }
 
+// Red sticker, readable on every section color.
 .error {
-  color: var(--color-red-pen);
+  align-self: flex-start;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-red);
+  color: #fff;
+  border-radius: 999px;
   font-size: 0.95rem;
+  font-weight: 700;
 }
