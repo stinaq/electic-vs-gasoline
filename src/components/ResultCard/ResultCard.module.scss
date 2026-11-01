@@ -1,0 +1,78 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+  background: var(--color-paper-shade);
+  box-shadow: var(--shadow-offset);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  transform: rotate(-0.6deg);
+
+  // Border drawn on a pseudo-element so the rough-ink filter never touches the text.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: var(--line-bold) solid var(--color-ink);
+    border-radius: inherit;
+    filter: url(#ink);
+    pointer-events: none;
+  }
+
+  &:nth-child(even) {
+    transform: rotate(0.8deg);
+    border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
+  }
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+.cost {
+  font-size: 2.2rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.stroke {
+  padding: 0 var(--space-1);
+  background-image: linear-gradient(
+    100deg,
+    transparent 1%,
+    var(--color-highlighter) 3%,
+    var(--color-highlighter) 96%,
+    transparent 99%
+  );
+  background-repeat: no-repeat;
+  background-position: left 60%;
+  background-size: 0% 70%;
+  transition: background-size var(--duration-draw) ease-out;
+}
+
+.highlighted {
+  composes: card;
+
+  .title {
+    padding-right: var(--space-4);
+  }
+
+  .stroke {
+    background-size: 100% 70%;
+  }
+
+  // Hand-drawn check mark next to the winner.
+  &::after {
+    content: '✓';
+    position: absolute;
+    top: -30px;
+    right: -14px;
+    font-family: var(--font-heading);
+    font-size: 3.2rem;
+    line-height: 1;
+    transform: rotate(8deg);
+  }
+}

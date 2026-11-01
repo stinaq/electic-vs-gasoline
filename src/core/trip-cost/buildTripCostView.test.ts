@@ -1,0 +1,177 @@
+import { describe, expect, it } from 'vitest';
+import { ELECTRICITY_PRICE_RANGE, GASOLINE_PRICE_RANGE, TEXT } from '../constants';
+import {
+  buildBreakEven,
+  buildCarView,
+  buildPriceSlider,
+  buildResults,
+  buildSummary,
+  buildTripCostView,
+  calculateComparison,
+  createInitialInput,
+  shortNameOf,
+} from './buildTripCostView';
+import type { CarPair, TripCostInput } from './types';
+
+const nbsp = ' ';
+
+const cars: CarPair = {
+  gasoline: { id: 'gas', name: 'Gas Car', type: 'gasoline', consumptionPer100Km: 8 },
+  electric: {
+    id: 'ev',
+    name: 'EV (2022, 40 kWh)',
+    shortName: 'EV',
+    type: 'electric',
+    consumptionPer100Km: 13,
+    consumptionRange: { min: 12, max: 30, step: 0.1 },
+  },
+};
+
+const input = (overrides: Partial<TripCostInput> = {}): TripCostInput => ({
+  ...createInitialInput(cars),
+  ...overrides,
+});
+
+describe('createInitialInput', () => {
+  it('starts with an empty, untouched distance and the configured defaults', () => {
+    expect(createInitialInput(cars)).toEqual({
+      distance: '',
+      distanceTouched: false,
+      roundTrip: false,
+      gasolinePrice: GASOLINE_PRICE_RANGE.defaultValue,
+      electricityPrice: ELECTRICITY_PRICE_RANGE.defaultValue,
+      kWhPer100Km: 13,
+    });
+  });
+});
+
+describe('buildPriceSlider', () => {
+  it('passes through the range and formats the value as money per unit', () => {
+    expect(buildPriceSlider(17.5, GASOLINE_PRICE_RANGE, 'kr/l')).toEqual({
+      value: 17.5,
+      min: 12,
+      max: 30,
+      step: 0.1,
+      display: `17,50${nbsp}kr/l`,
+    });
+  });
+});
+
+describe('buildCarView', () => {
+  it('shows read-only text for a car without an editable range', () => {
+    expect(buildCarView(cars.gasoline, 8)).toEqual({
+      name: 'Gas Car',
+      consumptionText: `8,0${nbsp}l/100 km`,
+      consumptionSlider: null,
+    });
+  });
+
+  it('shows a slider with step precision for an editable car', () => {
+    expect(buildCarView(cars.electric, 14.3)).toEqual({
+      name: 'EV (2022, 40 kWh)',
+      consumptionText: null,
+      consumptionSlider: { value: 14.3, min: 12, max: 30, step: 0.1, display: `14,3${nbsp}kWh/100 km` },
+    });
+  });
+});
+
+describe('calculateComparison', () => {
+  it('applies round trip and current prices', () => {
+    // 25 km: gasoline 25/100 × 8 × 17,50 = 35 kr, electric 25/100 × 13 × 2 = 6,50 kr
+    const result = calculateComparison(12.5, input({ roundTrip: true }), cars);
+    expect(result.gasolineCost).toBeCloseTo(35);
+    expect(result.electricCost).toBeCloseTo(6.5);
+    expect(result.cheaper).toBe('electric');
+  });
+
+  it('uses the adjusted electric consumption', () => {
+    const result = calculateComparison(100, input({ kWhPer100Km: 30, electricityPrice: 15 }), cars);
+    expect(result.electricCost).toBeCloseTo(450);
+    expect(result.cheaper).toBe('gasoline');
+  });
+});
+
+describe('shortNameOf', () => {
+  it('uses the short name when set', () => {
+    expect(shortNameOf(cars.electric)).toBe('EV');
+  });
+
+  it('falls back to the full name', () => {
+    expect(shortNameOf(cars.gasoline)).toBe('Gas Car');
+  });
+});
+
+describe('buildSummary', () => {
+  it('names the cheaper car by its short name, with the saving', () => {
+    expect(buildSummary({ gasolineCost: 300, electricCost: 152.8, cheaper: 'electric', saving: 147.2 }, cars)).toBe(
+      `EV is cheaper by 147,20${nbsp}kr`,
+    );
+    expect(buildSummary({ gasolineCost: 10, electricCost: 20, cheaper: 'gasoline', saving: 10 }, cars)).toBe(
+      `Gas Car is cheaper by 10,00${nbsp}kr`,
+    );
+  });
+
+  it('says so for a tie', () => {
+    expect(buildSummary({ gasolineCost: 10, electricCost: 10, cheaper: 'equal', saving: 0 }, cars)).toBe(TEXT.tie);
+  });
+});
+
+describe('buildResults', () => {
+  it('highlights only the cheaper car', () => {
+    const results = buildResults({ gasolineCost: 35, electricCost: 6.5, cheaper: 'electric', saving: 28.5 }, cars);
+    expect(results.gasoline).toEqual({ title: 'Gas Car', cost: `35,00${nbsp}kr`, highlighted: false });
+    expect(results.electric).toEqual({ title: 'EV (2022, 40 kWh)', cost: `6,50${nbsp}kr`, highlighted: true });
+  });
+
+  it('highlights neither car for a tie', () => {
+    const results = buildResults({ gasolineCost: 10, electricCost: 10, cheaper: 'equal', saving: 0 }, cars);
+    expect(results.gasoline.highlighted).toBe(false);
+    expect(results.electric.highlighted).toBe(false);
+  });
+});
+
+describe('buildBreakEven', () => {
+  it('formats both break-even prices', () => {
+    expect(buildBreakEven(input(), cars)).toEqual({
+      electricity: `Electric is cheaper while electricity is below 10,77${nbsp}kr/kWh`,
+      gasoline: `Gasoline is cheaper while gasoline is below 3,25${nbsp}kr/l`,
+    });
+  });
+
+  it('shows nothing when a consumption is 0', () => {
+    expect(buildBreakEven(input({ kWhPer100Km: 0 }), cars)).toEqual({ electricity: null, gasoline: null });
+  });
+});
+
+describe('buildTripCostView', () => {
+  it('hides results and errors on first load', () => {
+    const view = buildTripCostView(input(), cars);
+    expect(view.results).toBeNull();
+    expect(view.distanceError).toBeNull();
+  });
+
+  it('shows break-even even without a valid distance', () => {
+    const view = buildTripCostView(input({ distance: 'abc', distanceTouched: true }), cars);
+    expect(view.breakEven.electricity).not.toBeNull();
+    expect(view.breakEven.gasoline).not.toBeNull();
+  });
+
+  it.each(['', 'abc', '0', '-3'])('shows an error and no results for %j once touched', (distance) => {
+    const view = buildTripCostView(input({ distance, distanceTouched: true }), cars);
+    expect(view.results).toBeNull();
+    expect(view.distanceError).not.toBeNull();
+  });
+
+  it('shows results for a valid distance', () => {
+    const view = buildTripCostView(input({ distance: '12,5', distanceTouched: true, roundTrip: true }), cars);
+    expect(view.distanceError).toBeNull();
+    expect(view.results?.gasoline.cost).toBe(`35,00${nbsp}kr`);
+    expect(view.results?.electric.cost).toBe(`6,50${nbsp}kr`);
+    expect(view.results?.summary).toBe(`EV is cheaper by 28,50${nbsp}kr`);
+  });
+
+  it('shows a tie at the break-even electricity price', () => {
+    const view = buildTripCostView(input({ distance: '100', electricityPrice: (17.5 * 8) / 13 }), cars);
+    expect(view.results?.summary).toBe(TEXT.tie);
+  });
+});
