@@ -18,6 +18,12 @@ npm run lint    # ESLint, including the layer rules
 npm run build   # type check + production build
 ```
 
+## Deploy
+
+Hosted on Netlify, which deploys every push to `main` automatically. Build settings live in
+[netlify.toml](netlify.toml): lint, test and build, then publish `dist/`. Pull requests get a
+deploy preview.
+
 ## Docs
 
 For contributors and AI agents:

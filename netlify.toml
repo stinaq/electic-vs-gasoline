@@ -1,0 +1,11 @@
+# Netlify build settings. Netlify reads this file from the repo root on every deploy,
+# so these override anything set in the Netlify UI.
+
+[build]
+  # Lint and test first so a broken commit never gets deployed.
+  command = "npm run lint && npm run test && npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 8 needs Node 20.19+ or 22.12+.
+  NODE_VERSION = "24"
